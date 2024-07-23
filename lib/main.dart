@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:postapp/core/routes.dart';
-import 'package:postapp/login/providers/login_provider.dart';
-import 'package:postapp/login/screen/login_screen.dart';
+import 'package:postapp/login/provider/login_provider.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -22,14 +21,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      routes: routes,
-      home: const LoginScreen(),
+      routerConfig: router,
     );
   }
 }
