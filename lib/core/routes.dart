@@ -1,5 +1,5 @@
 import 'package:go_router/go_router.dart';
-import 'package:postapp/home/home_screen.dart';
+import 'package:postapp/home/screen/home_screen.dart';
 import 'package:postapp/login/screen/login_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

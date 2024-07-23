@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:postapp/core/routes.dart';
+import 'package:postapp/home/provider/home_provider.dart';
 import 'package:postapp/login/provider/login_provider.dart';
 import 'package:provider/provider.dart';
 
@@ -9,6 +10,9 @@ void main() {
       providers: [
         ChangeNotifierProvider<LoginProvider>(
           create: (_) => LoginProvider(),
+        ),
+        ChangeNotifierProvider<HomeProvider>(
+          create: (_) => HomeProvider(),
         ),
       ],
       child: const MyApp(),

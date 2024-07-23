@@ -84,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 height: 16,
               ),
               TextFormField(
+                onEditingComplete: onTapLogin,
                 controller: passwordController,
                 inputFormatters: inputFormatters,
                 obscureText: !loginProvider.showPassword,
