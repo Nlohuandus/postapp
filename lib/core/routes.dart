@@ -12,7 +12,7 @@ final router = GoRouter(
       builder: (context, state) => const LoginScreen(),
       redirect: (context, state) async {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
-        bool? isAuthenticated = prefs.getBool("key");
+        bool? isAuthenticated = prefs.getBool("isAuthenticated");
         if (isAuthenticated ?? false) {
           return '/home';
         } else {
