@@ -1,9 +1,9 @@
 import 'package:postapp/core/dio_client.dart';
 import 'package:postapp/home/models/post_model.dart';
 import 'package:postapp/home/models/user_model.dart';
-import 'package:postapp/home/repositories/home_repository.dart';
+import 'package:postapp/repositories/posts_repository.dart';
 
-class HomeRepositoryImpl implements HomeRepository {
+class PostsRepositoryImpl implements PostsRepository {
   final _dio = DioClient().dio;
 
   @override
@@ -40,5 +40,19 @@ class HomeRepositoryImpl implements HomeRepository {
     return (response.data as List)
         .map((element) => PostModel.fromJson(element))
         .toList();
+  }
+
+  @override
+  Future<PostModel> newPost({required PostModel post}) async {
+    try {
+      final response = await _dio.post(
+        'posts',
+        data: post,
+      );
+
+      return PostModel.fromJson(response.data);
+    } catch (e) {
+      throw Exception("No se pudo crear el Post");
+    }
   }
 }

@@ -1,6 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:postapp/home/screen/home_screen.dart';
 import 'package:postapp/login/screen/login_screen.dart';
+import 'package:postapp/new_post/screen/new_post_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final router = GoRouter(
@@ -24,6 +25,11 @@ final router = GoRouter(
       path: '/home',
       name: "home",
       builder: (context, state) => const HomeScreen(),
+    ),
+    GoRoute(
+      path: '/new-post',
+      name: "new-post",
+      builder: (context, state) => const NewPostScreen(),
     ),
   ],
 );

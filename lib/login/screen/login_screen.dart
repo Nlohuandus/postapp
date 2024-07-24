@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:postapp/login/provider/login_provider.dart';
 import 'package:postapp/login/widget/default_snackbar.dart';
+import 'package:postapp/providers/login_provider.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {

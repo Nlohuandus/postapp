@@ -1,9 +1,10 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:postapp/home/provider/home_provider.dart';
 import 'package:postapp/home/widgets/post_list.dart';
 import 'package:postapp/login/widget/default_snackbar.dart';
+import 'package:postapp/providers/posts_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -16,13 +17,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final TextEditingController searchController = TextEditingController();
-  late HomeProvider homeProvider;
+  late PostsProvider homeProvider;
   int backCount = 0;
 
   @override
   initState() {
     super.initState();
-    homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    homeProvider = Provider.of<PostsProvider>(context, listen: false);
     searchController.addListener(
       () {
         if (searchController.text.isEmpty) {
@@ -81,9 +82,18 @@ class _HomeScreenState extends State<HomeScreen> {
       canPop: false,
       onPopInvoked: onPopInvoked,
       child: Scaffold(
+        floatingActionButton: FloatingActionButton(
+          onPressed: () async => context.pushNamed("new-post"),
+          backgroundColor: Colors.deepPurple,
+          child: const Icon(
+            Icons.add,
+            color: Colors.white,
+          ),
+        ),
         body: CustomScrollView(
           slivers: [
             SliverAppBar(
+              automaticallyImplyLeading: false,
               floating: true,
               actions: [
                 IconButton(
@@ -119,7 +129,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            PostList(postList: context.watch<HomeProvider>().postListToShow),
+            PostList(postList: context.watch<PostsProvider>().postListToShow),
           ],
         ),
       ),

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:postapp/home/models/post_model.dart';
-import 'package:postapp/home/repositories/home_repository_impl.dart';
+import 'package:postapp/repositories/posts_repository_impl.dart';
 
-class HomeProvider with ChangeNotifier {
-  final HomeRepositoryImpl _homeRepository = HomeRepositoryImpl();
+class PostsProvider with ChangeNotifier {
+  final PostsRepositoryImpl _homeRepository = PostsRepositoryImpl();
   List<PostModel> _postList = [];
   List<PostModel>? _filteredPostList;
 
@@ -30,6 +30,15 @@ class HomeProvider with ChangeNotifier {
   Future<void> getPostByUser({required String name}) async {
     try {
       _filteredPostList = await _homeRepository.getPostByUser(name: name);
+    } catch (e) {
+      rethrow;
+    }
+    notifyListeners();
+  }
+
+  Future<void> newPost({required PostModel newPost}) async {
+    try {
+      await _homeRepository.newPost(post: newPost);
     } catch (e) {
       rethrow;
     }
