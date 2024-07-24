@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:postapp/home/provider/home_provider.dart';
+import 'package:postapp/home/widgets/post_list.dart';
+import 'package:postapp/login/widget/default_snackbar.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -21,6 +23,13 @@ class _HomeScreenState extends State<HomeScreen> {
   initState() {
     super.initState();
     homeProvider = Provider.of<HomeProvider>(context, listen: false);
+    searchController.addListener(
+      () {
+        if (searchController.text.isEmpty) {
+          homeProvider.setFilteredPostList(null);
+        }
+      },
+    );
     homeProvider.getPosts();
   }
 
@@ -42,11 +51,26 @@ class _HomeScreenState extends State<HomeScreen> {
     if (backCount >= 2) {
       exit(0);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Presione otra vez para salir"),
-          duration: Duration(seconds: 2),
-        ),
+      DefaultSnackbar.show(
+        context,
+        "Presione otra vez para salir",
+        Colors.black54,
+      );
+    }
+  }
+
+  searchByUser() async {
+    FocusManager.instance.primaryFocus!.unfocus();
+    try {
+      await homeProvider.getPostByUser(
+        name: searchController.text,
+      );
+    } catch (e) {
+      if (!mounted) return;
+      DefaultSnackbar.show(
+        context,
+        e.toString(),
+        Colors.black54,
       );
     }
   }
@@ -69,8 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
               title: TextField(
                 controller: searchController,
-                onEditingComplete: () =>
-                    homeProvider.getPostByUser(name: searchController.text),
+                onEditingComplete: searchByUser,
                 decoration: InputDecoration(
                   hintText: "Buscar por nombre de usuario",
                   border: const OutlineInputBorder(),
@@ -78,13 +101,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       GestureDetector(
-                        onTap: () => homeProvider.getPostByUser(
-                          name: searchController.text,
-                        ),
+                        onTap: searchByUser,
                         child: const Icon(Icons.search),
                       ),
                       GestureDetector(
-                        onTap: searchController.clear,
+                        onTap: () {
+                          searchController.clear();
+                          FocusManager.instance.primaryFocus!.unfocus();
+                        },
                         child: const Icon(Icons.close),
                       ),
                       const SizedBox(
@@ -95,52 +119,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             ),
-            SliverList.builder(
-              itemBuilder: (context, index) => Container(
-                margin: const EdgeInsets.all(16),
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.deepPurple.shade500),
-                  borderRadius: const BorderRadius.all(Radius.circular(16)),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      homeProvider.postList[index].title,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.deepPurple,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      homeProvider.postList[index].body,
-                      textAlign: TextAlign.start,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Text(
-                          "userID : ${homeProvider.postList[index].id}",
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                        Text(
-                          "postID : ${homeProvider.postList[index].id}",
-                          textAlign: TextAlign.start,
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              itemCount: context.watch<HomeProvider>().postList.length,
-            ),
+            PostList(postList: context.watch<HomeProvider>().postListToShow),
           ],
         ),
       ),

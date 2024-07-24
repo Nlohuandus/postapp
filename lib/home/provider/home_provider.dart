@@ -9,14 +9,30 @@ class HomeProvider with ChangeNotifier {
 
   List<PostModel> get postList => _postList;
   List<PostModel>? get filteredPostList => _filteredPostList;
+  List<PostModel> get postListToShow {
+    if (_filteredPostList != null) {
+      return _filteredPostList!;
+    } else {
+      return _postList;
+    }
+  }
+
+  setFilteredPostList(List<PostModel>? filteredPostList) {
+    _filteredPostList = filteredPostList;
+    notifyListeners();
+  }
 
   getPosts() async {
     _postList = await _homeRepository.getPosts();
     notifyListeners();
   }
 
-  getPostByUser({required String name}) async {
-    _filteredPostList = await _homeRepository.getPostByUser(name: name);
+  Future<void> getPostByUser({required String name}) async {
+    try {
+      _filteredPostList = await _homeRepository.getPostByUser(name: name);
+    } catch (e) {
+      rethrow;
+    }
     notifyListeners();
   }
 }

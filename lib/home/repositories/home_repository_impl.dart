@@ -28,7 +28,7 @@ class HomeRepositoryImpl implements HomeRepository {
     if (user != null) {
       return await getPostByUserId(userId: user.id!);
     } else {
-      return null;
+      throw Exception("No se encontro usuario");
     }
   }
 

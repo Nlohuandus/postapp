@@ -31,7 +31,7 @@ class LoginProvider with ChangeNotifier {
 
   String? doAuthentication({required String user, required String password}) {
     setError(null);
-    if (user != "challenge@fudo" || password != "password") {
+    if (user.trim() != "challenge@fudo" || password.trim() != "password") {
       setError("Usuario o contraseña incorrectos");
     }
     if (password.isEmpty) {

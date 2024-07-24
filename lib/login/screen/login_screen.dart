@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:postapp/login/provider/login_provider.dart';
+import 'package:postapp/login/widget/default_snackbar.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -42,12 +43,7 @@ class _LoginScreenState extends State<LoginScreen> {
       context.pushReplacementNamed("home");
     }
     if (result != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(loginProvider.error!),
-          backgroundColor: Colors.red,
-        ),
-      );
+      DefaultSnackbar.show(context, loginProvider.error!, Colors.red.shade200);
     }
   }
 
