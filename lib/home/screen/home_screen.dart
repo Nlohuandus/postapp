@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:postapp/home/widgets/post_list.dart';
 import 'package:postapp/login/widget/default_snackbar.dart';
 import 'package:postapp/providers/posts_provider.dart';
@@ -31,7 +32,25 @@ class _HomeScreenState extends State<HomeScreen> {
         }
       },
     );
-    homeProvider.getPosts();
+    WidgetsBinding.instance.addPostFrameCallback(getPosts);
+  }
+
+  getPosts(_) async {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    try {
+      context.loaderOverlay.show();
+      await homeProvider.getPosts();
+    } catch (e) {
+      homeProvider.restoreLastHomeData();
+      DefaultSnackbar.show(
+        context,
+        text: "Sin conexion a internet",
+        color: Colors.red.shade300,
+        persistent: true,
+      );
+    } finally {
+      context.loaderOverlay.hide();
+    }
   }
 
   clearSharedPrefs() async {
@@ -54,8 +73,8 @@ class _HomeScreenState extends State<HomeScreen> {
     } else {
       DefaultSnackbar.show(
         context,
-        "Presione otra vez para salir",
-        Colors.black54,
+        text: "Presione otra vez para salir",
+        color: Colors.black54,
       );
     }
   }
@@ -63,6 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
   searchByUser() async {
     FocusManager.instance.primaryFocus!.unfocus();
     try {
+      context.loaderOverlay.show();
       await homeProvider.getPostByUser(
         name: searchController.text,
       );
@@ -70,9 +90,11 @@ class _HomeScreenState extends State<HomeScreen> {
       if (!mounted) return;
       DefaultSnackbar.show(
         context,
-        e.toString(),
-        Colors.black54,
+        text: e.toString(),
+        color: Colors.black54,
       );
+    } finally {
+      context.loaderOverlay.hide();
     }
   }
 
@@ -90,47 +112,50 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.white,
           ),
         ),
-        body: CustomScrollView(
-          slivers: [
-            SliverAppBar(
-              automaticallyImplyLeading: false,
-              floating: true,
-              actions: [
-                IconButton(
-                  onPressed: clearSharedPrefs,
-                  icon: const Icon(Icons.logout),
-                ),
-              ],
-              title: TextField(
-                controller: searchController,
-                onEditingComplete: searchByUser,
-                decoration: InputDecoration(
-                  hintText: "Buscar por nombre de usuario",
-                  border: const OutlineInputBorder(),
-                  suffixIcon: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      GestureDetector(
-                        onTap: searchByUser,
-                        child: const Icon(Icons.search),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          searchController.clear();
-                          FocusManager.instance.primaryFocus!.unfocus();
-                        },
-                        child: const Icon(Icons.close),
-                      ),
-                      const SizedBox(
-                        width: 6,
-                      ),
-                    ],
+        body: RefreshIndicator(
+          onRefresh: () => getPosts(Duration.zero),
+          child: CustomScrollView(
+            slivers: [
+              SliverAppBar(
+                automaticallyImplyLeading: false,
+                floating: true,
+                actions: [
+                  IconButton(
+                    onPressed: clearSharedPrefs,
+                    icon: const Icon(Icons.logout),
+                  ),
+                ],
+                title: TextField(
+                  controller: searchController,
+                  onEditingComplete: searchByUser,
+                  decoration: InputDecoration(
+                    hintText: "Buscar por nombre de usuario",
+                    border: const OutlineInputBorder(),
+                    suffixIcon: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        GestureDetector(
+                          onTap: searchByUser,
+                          child: const Icon(Icons.search),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            searchController.clear();
+                            FocusManager.instance.primaryFocus!.unfocus();
+                          },
+                          child: const Icon(Icons.close),
+                        ),
+                        const SizedBox(
+                          width: 6,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-            PostList(postList: context.watch<PostsProvider>().postListToShow),
-          ],
+              PostList(postList: context.watch<PostsProvider>().postListToShow),
+            ],
+          ),
         ),
       ),
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:postapp/login/widget/default_snackbar.dart';
 import 'package:postapp/providers/posts_provider.dart';
 import 'package:provider/provider.dart';
@@ -14,31 +16,51 @@ class _NewPostScreenState extends State<NewPostScreen> {
   final TextEditingController titleController = TextEditingController();
   final TextEditingController bodyController = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late PostsProvider postsProvider;
+
+  @override
+  initState() {
+    super.initState();
+    postsProvider = Provider.of<PostsProvider>(context, listen: false);
+  }
+
+  @override
+  dispose() {
+    titleController.dispose();
+    bodyController.dispose();
+    super.dispose();
+  }
 
   onPressedPost() async {
     FocusManager.instance.primaryFocus!.unfocus();
-
     try {
       if (_formKey.currentState!.validate()) {
-        await context.read<PostsProvider>().newPost(
-              body: bodyController.text,
-              title: titleController.text,
-            );
+        context.loaderOverlay.show();
+        await Future.delayed(
+          const Duration(seconds: 2),
+          () async => await context.read<PostsProvider>().newPost(
+                body: bodyController.text,
+                title: titleController.text,
+              ),
+        );
 
         if (!mounted) return;
         DefaultSnackbar.show(
           context,
-          "El post se creo con exito!",
-          Colors.green.shade300,
+          text: "El post se creo con exito!",
+          color: Colors.green.shade300,
         );
+        context.pop();
       }
     } catch (e) {
       if (!mounted) return;
       DefaultSnackbar.show(
         context,
-        "No se pudo crear el post",
-        Colors.red.shade300,
+        text: "No se pudo crear el post",
+        color: Colors.red.shade300,
       );
+    } finally {
+      context.loaderOverlay.hide();
     }
   }
 

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:postapp/core/dio_client.dart';
 import 'package:postapp/home/models/post_model.dart';
 import 'package:postapp/home/models/user_model.dart';
@@ -8,11 +9,15 @@ class PostsRepositoryImpl implements PostsRepository {
 
   @override
   Future<List<PostModel>> getPosts() async {
-    final response = await _dio.get('posts');
+    try {
+      final response = await _dio.get('posts');
 
-    return (response.data as List)
-        .map((element) => PostModel.fromJson(element))
-        .toList();
+      return (response.data as List)
+          .map((element) => PostModel.fromJson(element))
+          .toList();
+    } on DioException {
+      throw Exception("No hay conexion a internet");
+    }
   }
 
   @override

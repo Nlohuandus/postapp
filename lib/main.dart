@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loader_overlay/loader_overlay.dart';
 import 'package:postapp/core/routes.dart';
 import 'package:postapp/providers/login_provider.dart';
 import 'package:postapp/providers/posts_provider.dart';
@@ -15,7 +16,10 @@ void main() {
           create: (_) => PostsProvider(),
         ),
       ],
-      child: const MyApp(),
+      child: const Directionality(
+        textDirection: TextDirection.ltr,
+        child: LoaderOverlay(child: MyApp()),
+      ),
     ),
   );
 }

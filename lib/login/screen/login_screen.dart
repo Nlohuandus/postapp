@@ -43,7 +43,11 @@ class _LoginScreenState extends State<LoginScreen> {
       context.pushReplacementNamed("home");
     }
     if (result != null) {
-      DefaultSnackbar.show(context, loginProvider.error!, Colors.red.shade200);
+      DefaultSnackbar.show(
+        context,
+        text: loginProvider.error!,
+        color: Colors.red.shade200,
+      );
     }
   }
 

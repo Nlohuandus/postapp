@@ -9,10 +9,17 @@ class DefaultSnackbar {
   final String text;
   final Color color;
 
-  static show(BuildContext context, String text, Color color) {
+  static show(
+    BuildContext context, {
+    required String text,
+    required Color color,
+    bool persistent = false,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        duration: const Duration(seconds: 2),
+        showCloseIcon: persistent,
+        duration:
+            persistent ? const Duration(hours: 1) : const Duration(seconds: 2),
         content: Text(text),
         backgroundColor: color,
         behavior: SnackBarBehavior.floating,
