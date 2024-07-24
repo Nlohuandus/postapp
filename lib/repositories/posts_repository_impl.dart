@@ -47,7 +47,7 @@ class PostsRepositoryImpl implements PostsRepository {
     try {
       final response = await _dio.post(
         'posts',
-        data: post,
+        data: post.toJson(),
       );
 
       return PostModel.fromJson(response.data);

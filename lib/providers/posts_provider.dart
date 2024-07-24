@@ -36,8 +36,9 @@ class PostsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> newPost({required PostModel newPost}) async {
+  Future<void> newPost({required String title, required String body}) async {
     try {
+      PostModel newPost = PostModel(title: title, body: body, userId: 5);
       await _homeRepository.newPost(post: newPost);
     } catch (e) {
       rethrow;

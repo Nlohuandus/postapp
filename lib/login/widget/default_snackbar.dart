@@ -14,7 +14,7 @@ class DefaultSnackbar {
       SnackBar(
         duration: const Duration(seconds: 2),
         content: Text(text),
-        backgroundColor: Colors.red.shade300,
+        backgroundColor: color,
         behavior: SnackBarBehavior.floating,
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(16)),
