@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:loader_overlay/loader_overlay.dart';
+import 'package:postapp/home/widgets/home_search_field.dart';
 import 'package:postapp/home/widgets/post_list.dart';
 import 'package:postapp/login/widget/default_snackbar.dart';
 import 'package:postapp/providers/posts_provider.dart';
@@ -125,32 +126,9 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: const Icon(Icons.logout),
                   ),
                 ],
-                title: TextField(
-                  controller: searchController,
-                  onEditingComplete: searchByUser,
-                  decoration: InputDecoration(
-                    hintText: "Buscar por nombre de usuario",
-                    border: const OutlineInputBorder(),
-                    suffixIcon: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        GestureDetector(
-                          onTap: searchByUser,
-                          child: const Icon(Icons.search),
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            searchController.clear();
-                            FocusManager.instance.primaryFocus!.unfocus();
-                          },
-                          child: const Icon(Icons.close),
-                        ),
-                        const SizedBox(
-                          width: 6,
-                        ),
-                      ],
-                    ),
-                  ),
+                title: HomeSearchField(
+                  searchController: searchController,
+                  onSearch: searchByUser,
                 ),
               ),
               PostList(postList: context.watch<PostsProvider>().postListToShow),
