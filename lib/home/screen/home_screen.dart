@@ -42,7 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
       context.loaderOverlay.show();
       await homeProvider.getPosts();
     } catch (e) {
-      homeProvider.restoreLastHomeData();
+      await homeProvider.restoreLastHomeData();
       DefaultSnackbar.show(
         context,
         text: "Sin conexion a internet",

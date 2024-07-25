@@ -37,7 +37,7 @@ class PostsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  restoreLastHomeData() async {
+  Future<void> restoreLastHomeData() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     String unparsedData = prefs.getString("lastHomeData") ?? '[]';
     var list = jsonDecode(unparsedData);
